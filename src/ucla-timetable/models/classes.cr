@@ -179,5 +179,21 @@ class UCLA::Timetable
     # rels:
     # classFinalExam: /sis/classes/25f/a%26o%20sci/0001/001/classfinalexam/v1
     getter links : Array(Link)
+
+    def class_section(timetable : Timetable) : ClassSection
+      timetable.get_class_section(offered_term_code, subject_area_code, course_catalog_number, class_number)
+    end
+
+    def class_section_details(timetable : Timetable) : Array(SectionDetail)
+      class_section(timetable).class_section_details(timetable)
+    end
+
+    def starting : Time
+      Time.parse(class_start_date, "%Y-%m-%d", TIMEZONE)
+    end
+
+    def ending : Time
+      Time.parse(class_end_date, "%Y-%m-%d", TIMEZONE).at_end_of_day
+    end
   end
 end

@@ -61,6 +61,23 @@ class UCLA::Timetable
   struct SectionDetail
     include JSON::Serializable
 
+    # ===================
+    # Helper methods
+    # ===================
+
+    @[JSON::Field(ignore: true)]
+    getter period_start : Time { Time.in(TIMEZONE).at_beginning_of_day }
+
+    # period end is limited to
+    @[JSON::Field(ignore: true)]
+    property period_end : Time { period_start + 7.days }
+
+    # def schedule
+    #  meeting_rooms.select
+    # end
+
+    # ===================
+
     @[JSON::Field(key: "offeredTermCode")]
     getter offered_term_code : String
 
@@ -152,5 +169,8 @@ class UCLA::Timetable
 
     @[JSON::Field(key: "classSectionBuildingRoomCode")]
     getter room_code : String
+
+    def expand(period_start : Time, period_end : Time)
+    end
   end
 end

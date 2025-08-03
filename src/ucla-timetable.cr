@@ -13,6 +13,7 @@ class UCLA::Timetable
 
   Log              = ::Log.for(self)
   CACHE_EXPIRATION = 10.minutes
+  TIMEZONE         = Time::Location.load("America/Los_Angeles")
 end
 
 require "./ucla-timetable/models/*"
