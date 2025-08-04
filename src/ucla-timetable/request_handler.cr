@@ -6,7 +6,7 @@ class UCLA::Timetable
   protected def to_klass(klass, payload)
     klass.from_json(payload)
   rescue error : JSON::Error
-    Log.error(exception: error) { "error parsing #{klass}: --\n#{payload}\n-----------------" }
+    Timetable.logger.error(exception: error) { "error parsing #{klass}: --\n#{payload}\n-----------------" }
     raise error
   end
 
@@ -23,7 +23,7 @@ class UCLA::Timetable
     response = HTTP::Client.exec(method, url, headers: headers)
     raise "HTTP error requesting: #{method} #{url}\n#{response.status_code} - #{response.body}" unless response.success?
 
-    Log.trace { "\n  - request: #{method} #{url}\n    status: #{response.status_code}\n    response: #{response.body}" }
+    Timetable.logger.debug { "\n  - request: #{method} #{url}\n    status: #{response.status_code}\n    response: #{response.body}" }
 
     # cache the response
     resp_payload = response.body

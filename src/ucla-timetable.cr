@@ -16,6 +16,8 @@ module UCLA
 
     Log              = ::Log.for(self)
     CACHE_EXPIRATION = 10.minutes
+
+    class_property logger : ::Log = Log
   end
 end
 

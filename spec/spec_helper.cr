@@ -3,6 +3,12 @@ require "../src/ucla-timetable"
 
 require "webmock"
 
+Log.setup(:trace)
+
+Spec.before_suite do
+  Log.setup(:trace)
+end
+
 module UCLA
   def self.stub_access_token
     now = Time.utc

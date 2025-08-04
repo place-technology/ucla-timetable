@@ -7,10 +7,10 @@ class UCLA::Timetable
 
   def get_access_token : String
     if @token.empty? || Time.utc.to_unix >= @expires_at.to_unix
-      Log.debug { "⚠️ Access token expired or missing. Refreshing..." }
+      Timetable.logger.debug { "⚠️ Access token expired or missing. Refreshing..." }
       fetch_new_access_token
     else
-      Log.debug { "✅ Using existing access token" }
+      Timetable.logger.debug { "✅ Using existing access token" }
       @token
     end
   end
@@ -32,7 +32,7 @@ class UCLA::Timetable
     response = HTTP::Client.post(url, headers: headers, body: form)
     raise "HTTP error: #{response.status_code} - #{response.body}" if response.status_code >= 400
 
-    Log.trace { "Authentication response:\n#{response.body}" }
+    Timetable.logger.trace { "Authentication response:\n#{response.body}" }
     json = JSON.parse(response.body)
     raise "Failed to retrieve access token: #{json}" unless json["access_token"]?
 
@@ -40,7 +40,7 @@ class UCLA::Timetable
     expires_in = json["expires_in"].as_s.to_i64
     @expires_at = Time.unix(Time.utc.to_unix + expires_in - 60)
 
-    Log.debug { "🔄 Access token refreshed" }
+    Timetable.logger.debug { "🔄 Access token refreshed" }
     @token
   end
 
