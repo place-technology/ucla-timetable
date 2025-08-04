@@ -170,7 +170,52 @@ class UCLA::Timetable
     @[JSON::Field(key: "classSectionBuildingRoomCode")]
     getter room_code : String
 
-    def expand(period_start : Time, period_end : Time)
+    DAYS_CODE_MAP = {
+      'M' => Time::DayOfWeek::Monday,
+      'T' => Time::DayOfWeek::Tuesday,
+      'W' => Time::DayOfWeek::Wednesday,
+      'R' => Time::DayOfWeek::Thursday,
+      'F' => Time::DayOfWeek::Friday,
+      'S' => Time::DayOfWeek::Saturday,
+      'U' => Time::DayOfWeek::Sunday,
+    }
+
+    @[JSON::Field(ignore: true)]
+    getter days_of_week : Array(Time::DayOfWeek) do
+      days_of_week_code.chars.map { |c| DAYS_CODE_MAP[c]? }.compact
+    end
+
+    def expand_range(period_start : Time, period_end : Time) : Array(CalendarEntry)
+      entries = [] of CalendarEntry
+
+      # Loop from period_start to period_end, one day at a time
+      current_day = period_start.at_beginning_of_day
+      while current_day <= period_end
+        if days_of_week.includes?(current_day.day_of_week)
+          # Parse time strings into Time objects on the current day
+          begin
+            current_date = current_day.to_s("%Y-%m-%d")
+            event_start = Time.parse("#{current_date} #{start_time}", "%Y-%m-%d %I:%M%p", TIMEZONE)
+            event_end = Time.parse("#{current_date} #{stop_time}", "%Y-%m-%d %I:%M%p", TIMEZONE)
+
+            # Only add if within the overall bounds
+            if event_end > period_start && event_start < period_end
+              entries << CalendarEntry.new(
+                building_code,
+                room_code,
+                event_start,
+                event_end
+              )
+            end
+          rescue ex : Time::Format::Error
+            # You could log or raise depending on how you want to handle bad formats
+            raise "Invalid time format in start_time (#{start_time}) or stop_time (#{stop_time}): #{ex.message}"
+          end
+        end
+        current_day += 1.day
+      end
+
+      entries
     end
   end
 end

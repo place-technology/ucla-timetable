@@ -74,5 +74,23 @@ describe UCLA::Timetable do
 
     UCLA.stub_class_section_details
     details = klass.class_section_details(timetable).first
+    meeting_room = details.meeting_rooms.first
+    meeting_room.days_of_week.should eq [Time::DayOfWeek::Tuesday, Time::DayOfWeek::Thursday]
+
+    # check that it can expand the events in a defined period
+    tz = UCLA::Timetable::TIMEZONE
+    starting = Time.local(UCLA::Timetable::TIMEZONE).at_beginning_of_week
+    ending = starting.at_end_of_week
+
+    tuesday_start = Time.parse("#{(starting + 1.day).to_s("%Y-%m-%d")} 11:00AM", "%Y-%m-%d %I:%M%p", tz)
+    tuesday_end = Time.parse("#{(starting + 1.day).to_s("%Y-%m-%d")} 12:15PM", "%Y-%m-%d %I:%M%p", tz)
+    thursday_start = Time.parse("#{(starting + 3.days).to_s("%Y-%m-%d")} 11:00AM", "%Y-%m-%d %I:%M%p", tz)
+    thursday_end = Time.parse("#{(starting + 3.days).to_s("%Y-%m-%d")} 12:15PM", "%Y-%m-%d %I:%M%p", tz)
+
+    results = [
+      UCLA::Timetable::CalendarEntry.new("HAINES", "00220", tuesday_start, tuesday_end),
+      UCLA::Timetable::CalendarEntry.new("HAINES", "00220", thursday_start, thursday_end),
+    ]
+    meeting_room.expand_range(starting, ending).should eq results
   end
 end

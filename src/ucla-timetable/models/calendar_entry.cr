@@ -1,0 +1,24 @@
+class UCLA::Timetable
+  class CalendarEntry
+    include JSON::Serializable
+    include Comparable(self)
+
+    property host : String? = nil
+    property title : String? = nil
+
+    property event_start : Time
+    property event_end : Time
+
+    property building_code : String
+    property room_code : String
+
+    def initialize(@building_code, @room_code, @event_start, @event_end)
+    end
+
+    def <=>(other : self)
+      event_start <=> other.event_start
+    end
+
+    def_equals @building_code, @room_code, @event_start, @event_end
+  end
+end
