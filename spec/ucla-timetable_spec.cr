@@ -78,8 +78,8 @@ describe UCLA::Timetable do
     meeting_room.days_of_week.should eq [Time::DayOfWeek::Tuesday, Time::DayOfWeek::Thursday]
 
     # check that it can expand the events in a defined period
-    tz = UCLA::Timetable::TIMEZONE
-    starting = Time.local(UCLA::Timetable::TIMEZONE).at_beginning_of_week
+    tz = UCLA::TIMEZONE
+    starting = Time.local(UCLA::TIMEZONE).at_beginning_of_week
     ending = starting.at_end_of_week
 
     tuesday_start = Time.parse("#{(starting + 1.day).to_s("%Y-%m-%d")} 11:00AM", "%Y-%m-%d %I:%M%p", tz)
@@ -108,7 +108,7 @@ describe UCLA::Timetable do
     # "classEndDate": "2025-12-05",
 
     # periods start and end in the date range above
-    tz = UCLA::Timetable::TIMEZONE
+    tz = UCLA::TIMEZONE
     period_start = Time.parse("2025-09-29", "%Y-%m-%d", tz)
     period_end = Time.parse("2025-10-03", "%Y-%m-%d", tz)
     events = klass.calendar_events(timetable, period_start, period_end)

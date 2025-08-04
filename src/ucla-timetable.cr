@@ -6,14 +6,17 @@ require "uri"
 require "time"
 require "digest/md5"
 
-class UCLA::Timetable
-  {% begin %}
-    VERSION = {{ `shards version "#{__DIR__}"`.chomp.stringify.downcase }}
-  {% end %}
+module UCLA
+  TIMEZONE = Time::Location.load("America/Los_Angeles")
 
-  Log              = ::Log.for(self)
-  CACHE_EXPIRATION = 10.minutes
-  TIMEZONE         = Time::Location.load("America/Los_Angeles")
+  class Timetable
+    {% begin %}
+      VERSION = {{ `shards version "#{__DIR__}"`.chomp.stringify.downcase }}
+    {% end %}
+
+    Log              = ::Log.for(self)
+    CACHE_EXPIRATION = 10.minutes
+  end
 end
 
 require "./ucla-timetable/models/*"

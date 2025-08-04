@@ -1,6 +1,6 @@
 # ucla-timetable
 
-TODO: Write a description here
+A crystal lang interface to UCLAs Class Schedule: https://developer.api.ucla.edu/api/261
 
 ## Installation
 
@@ -9,7 +9,7 @@ TODO: Write a description here
    ```yaml
    dependencies:
      ucla-timetable:
-       github: your-github-user/ucla-timetable
+       github: place-technology/ucla-timetable
    ```
 
 2. Run `shards install`
@@ -18,17 +18,21 @@ TODO: Write a description here
 
 ```crystal
 require "ucla-timetable"
+
+period_start = Time.local(UCLA::TIMEZONE).at_beginning_of_day
+period_end = period_start.at_end_of_day
+
+timetable = UCLA::Timetable.new("https://qa.api.ucla.edu", "client_id", "client_secret")
+page_handler = timetable.list_classes
+page_handler.each_published do |klass|
+  events = klass.calendar_events(timetable, period_start, period_end)
+  puts events
+end
 ```
-
-TODO: Write usage instructions here
-
-## Development
-
-TODO: Write development instructions here
 
 ## Contributing
 
-1. Fork it (<https://github.com/your-github-user/ucla-timetable/fork>)
+1. Fork it (<https://github.com/place-technology/ucla-timetable/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
@@ -36,4 +40,4 @@ TODO: Write development instructions here
 
 ## Contributors
 
-- [Stephen von Takach](https://github.com/your-github-user) - creator and maintainer
+- [Stephen von Takach](https://github.com/stakach) - creator and maintainer
