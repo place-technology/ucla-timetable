@@ -180,18 +180,18 @@ class UCLA::Timetable
       'U' => Time::DayOfWeek::Sunday,
     }
 
-    @[JSON::Field(ignore: true)]
-    getter days_of_week : Array(Time::DayOfWeek) do
+    def days_of_week : Array(Time::DayOfWeek)
       days_of_week_code.chars.map { |c| DAYS_CODE_MAP[c]? }.compact
     end
 
     def expand_range(period_start : Time, period_end : Time) : Array(CalendarEntry)
       entries = [] of CalendarEntry
+      days = days_of_week
 
       # Loop from period_start to period_end, one day at a time
       current_day = period_start.at_beginning_of_day
       while current_day <= period_end
-        if days_of_week.includes?(current_day.day_of_week)
+        if days.includes?(current_day.day_of_week)
           # Parse time strings into Time objects on the current day
           begin
             current_date = current_day.to_s("%Y-%m-%d")

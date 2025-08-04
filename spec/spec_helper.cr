@@ -271,4 +271,14 @@ module UCLA
         }
       }))
   end
+
+  def self.stub_instructor_details
+    WebMock.stub(:get, "https://timetable.domain/sis/instructors/706325117/v1")
+      .to_return(body: %({
+        "name": [{"nameCollection": [{
+          "firstName": "Steve",
+          "lastName": "von"
+        }]}]
+      }))
+  end
 end

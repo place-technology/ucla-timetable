@@ -59,4 +59,12 @@ class UCLA::Timetable
   ) : SectionDetail
     request(NamedTuple(classSectionDetail: SectionDetail), "/sis/classsections/#{offered_term_code}/#{subject_area_code}/#{course_catalog_number}/#{class_section_number}/classsectiondetail/v1")[:classSectionDetail]
   end
+
+  def get_instructor_details(
+    ucla_id : String | Int64,
+  ) : Instructor?
+    # we return nil here on error as it's not critical information and we don't have API access currently
+    # also the sample code I am referencing also does something similar
+    request(Instructor, "/sis/instructors/#{ucla_id}/v1") rescue nil
+  end
 end

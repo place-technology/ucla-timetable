@@ -5,6 +5,7 @@ class UCLA::Timetable
 
     property host : String? = nil
     property title : String? = nil
+    property body : String? = nil
 
     property event_start : Time
     property event_end : Time

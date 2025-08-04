@@ -85,6 +85,31 @@ class UCLA::Timetable
         section.class_section_details(timetable)
       end
     end
+
+    EMPTY_ENTRY = [] of CalendarEntry
+
+    def calendar_events(timetable : Timetable, period_start : Time, period_end : Time) : Array(CalendarEntry)
+      class_details(timetable).flat_map do |details|
+        next EMPTY_ENTRY unless details.starting < period_end && details.ending > period_start
+
+        title = details.class_title
+        description = details.class_description
+
+        details.class_section_details(timetable).flat_map do |section|
+          instructors = section.instructors.compact_map do |instruct|
+            timetable.get_instructor_details(instruct.ucla_id).try(&.name)
+          end
+
+          section.meeting_rooms.flat_map do |room|
+            room.expand_range(period_start, period_end).tap(&.each { |entry|
+              entry.title = title
+              entry.body = description.presence
+              entry.host = instructors[0]?
+            })
+          end
+        end
+      end
+    end
   end
 
   struct SessionGroup
@@ -180,8 +205,13 @@ class UCLA::Timetable
     # classFinalExam: /sis/classes/25f/a%26o%20sci/0001/001/classfinalexam/v1
     getter links : Array(Link)
 
+    # returns a list that can be used to grab the ClassDetails or ClassSection
+    def class_details : Tuple(String, String, String, String)
+      {offered_term_code, subject_area_code, course_catalog_number, class_number}.map { |segment| URI.encode_path_segment(segment) }
+    end
+
     def class_section(timetable : Timetable) : ClassSection
-      timetable.get_class_section(offered_term_code, subject_area_code, course_catalog_number, class_number)
+      timetable.get_class_section(*class_details)
     end
 
     def class_section_details(timetable : Timetable) : Array(SectionDetail)

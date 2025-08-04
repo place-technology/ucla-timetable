@@ -93,4 +93,48 @@ describe UCLA::Timetable do
     ]
     meeting_room.expand_range(starting, ending).should eq results
   end
+
+  it "expands meeting times for a class" do
+    UCLA.stub_list_classes
+    UCLA.stub_class_sections
+    UCLA.stub_class_section_details
+    UCLA.stub_instructor_details
+
+    response = timetable.list_classes
+    klass = response.classes.first
+
+    # mock start and end dates
+    # "classStartDate": "2025-09-25",
+    # "classEndDate": "2025-12-05",
+
+    # periods start and end in the date range above
+    tz = UCLA::Timetable::TIMEZONE
+    period_start = Time.parse("2025-09-29", "%Y-%m-%d", tz)
+    period_end = Time.parse("2025-10-03", "%Y-%m-%d", tz)
+    events = klass.calendar_events(timetable, period_start, period_end)
+
+    # manually calculate the events that should be returned
+    tuesday_start = Time.parse("#{(period_start + 1.day).to_s("%Y-%m-%d")} 11:00AM", "%Y-%m-%d %I:%M%p", tz)
+    tuesday_end = Time.parse("#{(period_start + 1.day).to_s("%Y-%m-%d")} 12:15PM", "%Y-%m-%d %I:%M%p", tz)
+    thursday_start = Time.parse("#{(period_start + 3.days).to_s("%Y-%m-%d")} 11:00AM", "%Y-%m-%d %I:%M%p", tz)
+    thursday_end = Time.parse("#{(period_start + 3.days).to_s("%Y-%m-%d")} 12:15PM", "%Y-%m-%d %I:%M%p", tz)
+    results = [
+      UCLA::Timetable::CalendarEntry.new("HAINES", "00220", tuesday_start, tuesday_end),
+      UCLA::Timetable::CalendarEntry.new("HAINES", "00220", thursday_start, thursday_end),
+    ]
+
+    events.should eq results
+    events.first.host.should eq "Steve Von"
+    events.first.title.should eq "Climate Change: From Puzzles to Policy"
+
+    # ensure no results are returned outside the time period of the class
+    period_start = Time.parse("2025-08-04", "%Y-%m-%d", tz)
+    period_end = Time.parse("2025-08-10", "%Y-%m-%d", tz)
+    klass.calendar_events(timetable, period_start, period_end).should eq [] of UCLA::Timetable::CalendarEntry
+
+    # ensure some are returned where there is an overlap in time
+    period_start = Time.parse("2025-09-26", "%Y-%m-%d", tz)
+    period_end = Time.parse("2025-09-30", "%Y-%m-%d", tz).at_end_of_day
+    klass.calendar_events(timetable, period_start, period_end).should eq [results[0]]
+  end
 end
