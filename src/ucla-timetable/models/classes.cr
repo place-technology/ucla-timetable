@@ -75,9 +75,10 @@ class UCLA::Timetable
     end
 
     def class_sections(timetable : Timetable) : Array(ClassSection)
-      class_section_links.map do |link|
-        timetable.request(NamedTuple(classSection: ClassSection), link)[:classSection]
+      result = class_section_links.map do |link|
+        timetable.request(NamedTuple(classSection: ClassSection), link)[:classSection] rescue nil
       end
+      result.compact
     end
 
     def class_section_details(timetable : Timetable) : Array(SectionDetail)
