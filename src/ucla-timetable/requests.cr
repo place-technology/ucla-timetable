@@ -38,8 +38,8 @@ class UCLA::Timetable
     subject_area_code : String,
     course_catalog_number : String,
     class_number : String,
-  ) : ClassDetails?
-    request(NamedTuple(classDetail: ClassDetails), "/sis/classes/#{offered_term_code}/#{subject_area_code}/#{course_catalog_number}/#{class_number}/classdetail/v1")[:classDetail] rescue nil
+  ) : ClassDetails
+    request(NamedTuple(classDetail: ClassDetails), "/sis/classes/#{offered_term_code}/#{subject_area_code}/#{course_catalog_number}/#{class_number}/classdetail/v1")[:classDetail]
   end
 
   def get_class_section(
