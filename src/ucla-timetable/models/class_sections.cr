@@ -209,7 +209,7 @@ class UCLA::Timetable
             end
           rescue ex : Time::Format::Error
             # You could log or raise depending on how you want to handle bad formats
-            raise "Invalid time format in start_time (#{start_time}) or stop_time (#{stop_time}): #{ex.message}"
+            Timetable.logger.error(exception: ex) { "Invalid time format in start_time (#{start_time}) or stop_time (#{stop_time}): #{ex.message}" }
           end
         end
         current_day += 1.day
