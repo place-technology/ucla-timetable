@@ -195,8 +195,8 @@ class UCLA::Timetable
           # Parse time strings into Time objects on the current day
           begin
             current_date = current_day.to_s("%Y-%m-%d")
-            event_start = Time.parse("#{current_date} #{start_time}", "%Y-%m-%d %I:%M%p", TIMEZONE)
-            event_end = Time.parse("#{current_date} #{stop_time}", "%Y-%m-%d %I:%M%p", TIMEZONE)
+            event_start = Time.parse("#{current_date} #{start_time}", "%Y-%m-%d %I:%M%P", TIMEZONE)   # Example from API: "classSectionMeetingStartTime": "10:00AM",
+            event_end = Time.parse("#{current_date} #{stop_time}", "%Y-%m-%d %I:%M%P", TIMEZONE)
 
             # Only add if within the overall bounds
             if event_end > period_start && event_start < period_end
