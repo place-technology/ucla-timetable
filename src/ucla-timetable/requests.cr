@@ -65,6 +65,6 @@ class UCLA::Timetable
   ) : Instructor?
     # we return nil here on error as it's not critical information and we don't have API access currently
     # also the sample code I am referencing also does something similar
-    request(Instructor, "/sis/instructors/#{ucla_id}/v1") rescue nil
+    request(Instructor, "/sis/instructors/#{ucla_id}/v1", cache: "instruct-#{ucla_id}") rescue nil
   end
 end

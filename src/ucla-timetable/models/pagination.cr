@@ -32,9 +32,13 @@ class UCLA::Timetable
       self
     end
 
+    getter next_page_link : Link? do
+      links.find { |link| link.rel == "nextPage" }
+    end
+
     macro inherited
       def next_page
-        link = links.find { |link| link.rel == "nextPage" }
+        link = next_page_link
         return unless link
         # ensure timetable is set on the newly fetched page
         timetable.request(self.class, link.href, link.method).set_timetable(timetable)

@@ -12,7 +12,7 @@ class UCLA::Timetable
 
   def request(klass, url : String, method : String = "GET", cache : String? = nil)
     # check if the data is in the cache
-    if cache && (cached = @cache[cache])
+    if cache && (cached = @cache[cache]?)
       cached_response, timestamp = cached
       return to_klass(klass, cached_response) if Time.utc < timestamp
     end
@@ -23,7 +23,8 @@ class UCLA::Timetable
     response = HTTP::Client.exec(method, url, headers: headers)
     raise "HTTP error requesting: #{method} #{url}\n#{response.status_code} - #{response.body}" unless response.success?
 
-    Timetable.logger.debug { "\n  - request: #{method} #{url}\n    status: #{response.status_code}\n    response: #{response.body}" }
+    Timetable.logger.debug { "\n  - request: #{method} #{url}" }
+    Timetable.logger.trace { "\n    status: #{response.status_code}\n    response: #{response.body}" }
 
     # cache the response
     resp_payload = response.body

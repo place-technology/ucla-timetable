@@ -10,7 +10,7 @@ class UCLA::Timetable
       Timetable.logger.debug { "⚠️ Access token expired or missing. Refreshing..." }
       fetch_new_access_token
     else
-      Timetable.logger.debug { "✅ Using existing access token" }
+      Timetable.logger.trace { "✅ Using existing access token" }
       @token
     end
   end

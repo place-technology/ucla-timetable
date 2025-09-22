@@ -97,7 +97,10 @@ class UCLA::Timetable
 
     def calendar_events(timetable : Timetable, period_start : Time, period_end : Time) : Array(CalendarEntry)
       class_details(timetable).flat_map do |details|
-        next EMPTY_ENTRY unless details.starting < period_end && details.ending > period_start
+        unless details.starting < period_end && details.ending > period_start
+          Timetable.logger.debug { "skipping class details outside of range: #{details}" }
+          next EMPTY_ENTRY
+        end
 
         title = details.class_title
         description = details.class_description
