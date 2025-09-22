@@ -20,6 +20,10 @@ class UCLA::Timetable
       event_start <=> other.event_start
     end
 
+    getter room_key : String do
+      "#{self.building_code}-#{self.room_code}".downcase
+    end
+
     def_equals @building_code, @room_code, @event_start, @event_end
   end
 end
