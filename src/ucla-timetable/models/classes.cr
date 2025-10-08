@@ -104,6 +104,8 @@ class UCLA::Timetable
 
         title = details.class_title
         description = details.class_description
+        subject_code = subject_area_code
+        term_code = offered_term_code
 
         details.class_section_details(timetable).flat_map do |section|
           instructors = section.instructors.compact_map do |instruct|
@@ -113,6 +115,8 @@ class UCLA::Timetable
           section.meeting_rooms.flat_map do |room|
             room.expand_range(period_start, period_end).tap(&.each { |entry|
               entry.title = title
+              entry.term_code = term_code
+              entry.subject_code = subject_code
               entry.body = description.presence
               entry.host = instructors[0]?
             })
