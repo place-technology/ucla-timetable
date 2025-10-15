@@ -104,6 +104,7 @@ class UCLA::Timetable
 
         title = details.class_title
         description = details.class_description
+        course_number = details.course_catalog_number
         subject_code = subject_area_code
         term_code = offered_term_code
 
@@ -117,6 +118,7 @@ class UCLA::Timetable
               entry.title = title
               entry.term_code = term_code
               entry.subject_code = subject_code
+              entry.course_number = course_number
               entry.body = description.presence
               entry.host = instructors[0]?
             })

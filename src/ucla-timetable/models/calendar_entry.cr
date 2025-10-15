@@ -6,6 +6,7 @@ class UCLA::Timetable
     property host : String? = nil
     property title : String? = nil
     property subject_code : String? = nil
+    property course_number : String? = nil
     property term_code : String? = nil
     property body : String? = nil
 
