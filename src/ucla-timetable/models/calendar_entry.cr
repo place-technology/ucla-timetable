@@ -10,6 +10,9 @@ class UCLA::Timetable
     property term_code : String? = nil
     property body : String? = nil
 
+    # i.e. print code == N
+    property hide : Bool = false
+
     property event_start : Time
     property event_end : Time
 

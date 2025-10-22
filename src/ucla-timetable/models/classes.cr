@@ -113,6 +113,8 @@ class UCLA::Timetable
             timetable.get_instructor_details(instruct.ucla_id).try(&.name)
           end
 
+          hide_code = section.schedule_print_code.downcase == "n"
+
           section.meeting_rooms.flat_map do |room|
             room.expand_range(period_start, period_end).tap(&.each { |entry|
               entry.title = title
@@ -121,6 +123,7 @@ class UCLA::Timetable
               entry.course_number = course_number
               entry.body = description.presence
               entry.host = instructors[0]?
+              entry.hide = hide_code
             })
           end
         end
